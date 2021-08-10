@@ -8,13 +8,30 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Awesome List App'),
       ),
-      body: ListView(
-        children: List.generate(
-          taskList.length,
-          (index) {
-            return TaskContainer(task: taskList[index]);
-          },
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              children: List.generate(
+                taskList.length,
+                (index) {
+                  return TaskContainer(task: taskList[index]);
+                },
+              ),
+            ),
+          ),
+          Flexible(
+            child: GridView.count(
+              crossAxisCount: 2,
+              children: List.generate(
+                taskList.length,
+                (index) {
+                  return TaskContainer(task: taskList[index]);
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -35,20 +52,27 @@ class TaskContainer extends StatelessWidget {
           border: Border.all(color: Colors.grey.shade300),
         ),
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Text(
-              task.title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    task.title,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    task.description,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              task.description,
-              style: TextStyle(fontSize: 20),
-            ),
+            Icon(Icons.delete),
           ],
         ),
       ),
