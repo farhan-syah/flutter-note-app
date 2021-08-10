@@ -8,30 +8,13 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Awesome List App'),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: List.generate(
-                taskList.length,
-                (index) {
-                  return TaskContainer(task: taskList[index]);
-                },
-              ),
-            ),
-          ),
-          Flexible(
-            child: GridView.count(
-              crossAxisCount: 2,
-              children: List.generate(
-                taskList.length,
-                (index) {
-                  return TaskContainer(task: taskList[index]);
-                },
-              ),
-            ),
-          ),
-        ],
+      body: ListView(
+        children: List.generate(
+          taskList.length,
+          (index) {
+            return TaskContainer(task: taskList[index]);
+          },
+        ),
       ),
     );
   }
