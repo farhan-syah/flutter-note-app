@@ -1,41 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note/model/task.model.dart';
+import 'package:flutter_note/providers/task-list.provider.dart';
+import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Awesome List App'),
-      ),
-      body: ListView(
-        children: List.generate(
-          taskList.length,
-          (i) {
-            return TaskContainer(
-              task: taskList[i],
-              index: i,
-            );
-          },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // print(taskList.length);
-          taskList.add(
-            Task(
-                title: 'Task ${taskList.length + 1}',
-                description: 'Task ${taskList.length + 1} Description'),
+    return ChangeNotifierProvider<TaskListProvider>(
+      create: (context) => TaskListProvider(),
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Awesome List App'),
+            ),
+            body: Consumer<TaskListProvider>(
+              builder: (context, taskListProvider, child) {
+                final taskList = taskListProvider.taskList;
+                return ListView(
+                  children: List.generate(
+                    taskList.length,
+                    (i) {
+                      return TaskContainer(
+                        task: taskList[i],
+                        index: i,
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                final taskListProvider =
+                    Provider.of<TaskListProvider>(context, listen: false);
+                final taskList = taskListProvider.taskList;
+                final newTask = Task(
+                    title: 'Task ${taskList.length + 1}',
+                    description: 'Task ${taskList.length + 1} Description');
+                taskListProvider.addTask(newTask);
+              },
+              child: Icon(Icons.add),
+            ),
           );
-          print(taskList.length);
-          setState(() {});
         },
-        child: Icon(Icons.add),
       ),
     );
   }
@@ -92,11 +100,9 @@ class TaskContainer extends StatelessWidget {
               child: IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () {
-                  task.title = 'New title';
-                  // print(taskList[index].title);
-                  // taskList.removeAt(widget.index);
-                  // print(taskList.length);
-                  // setState(() {});
+                  final taskListProvider =
+                      Provider.of<TaskListProvider>(context, listen: false);
+                  taskListProvider.deleteTask(index);
                 },
               ),
             ),
