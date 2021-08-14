@@ -1,24 +1,29 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_note/model/task.model.dart';
+import 'package:get_storage/get_storage.dart';
 
 class TaskListProvider extends ChangeNotifier {
-  List<Task> taskList = [
-    Task(title: 'Task 1', description: 'Task 1 Description'),
-    Task(title: 'Task 2', description: 'Task 2 Description'),
-    Task(title: 'Task 3', description: 'Task 3 Description'),
-  ];
+  List<Task> taskList;
+
+  TaskListProvider({required this.taskList});
 
   update() {
+    final box = GetStorage();
+    box.write('taskList', taskList.map((e) => e.toMap()).toList());
+
+    final list = box.read('taskList');
+    print(list);
     notifyListeners();
   }
 
   addTask(Task task) {
     taskList.add(task);
-    notifyListeners();
+    update();
   }
 
   deleteTask(int index) {
     taskList.removeAt(index);
-    notifyListeners();
+    update();
   }
 }

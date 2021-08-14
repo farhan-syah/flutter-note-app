@@ -1,49 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note/model/task.model.dart';
 import 'package:flutter_note/providers/task-list.provider.dart';
+import 'package:flutter_note/screen/add-task.screen.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class TaskListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<TaskListProvider>(
-      create: (context) => TaskListProvider(),
-      child: Builder(
-        builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Awesome List App'),
-            ),
-            body: Consumer<TaskListProvider>(
-              builder: (context, taskListProvider, child) {
-                final taskList = taskListProvider.taskList;
-                return ListView(
-                  children: List.generate(
-                    taskList.length,
-                    (i) {
-                      return TaskContainer(
-                        task: taskList[i],
-                        index: i,
-                      );
-                    },
-                  ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Task List'),
+      ),
+      body: Consumer<TaskListProvider>(
+        builder: (context, taskListProvider, child) {
+          final taskList = taskListProvider.taskList;
+          return ListView(
+            children: List.generate(
+              taskList.length,
+              (i) {
+                return TaskContainer(
+                  task: taskList[i],
+                  index: i,
                 );
               },
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                final taskListProvider =
-                    Provider.of<TaskListProvider>(context, listen: false);
-                final taskList = taskListProvider.taskList;
-                final newTask = Task(
-                    title: 'Task ${taskList.length + 1}',
-                    description: 'Task ${taskList.length + 1} Description');
-                taskListProvider.addTask(newTask);
-              },
-              child: Icon(Icons.add),
-            ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // final taskListProvider =
+          //     Provider.of<TaskListProvider>(context, listen: false);
+          // final taskList = taskListProvider.taskList;
+          // final newTask = Task(
+          //     title: 'Task ${taskList.length + 1}',
+          //     description: 'Task ${taskList.length + 1} Description');
+          // taskListProvider.addTask(newTask);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddTaskScreen(),
+              ));
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -82,17 +81,6 @@ class TaskContainer extends StatelessWidget {
                     style: TextStyle(fontSize: 20),
                   ),
                 ],
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              child: IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () {
-                  // print(taskList[index].title);
-                  // taskList.removeAt(widget.index);
-                  // print(taskList.length);
-                },
               ),
             ),
             Material(
