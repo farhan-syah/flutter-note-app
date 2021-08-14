@@ -13,26 +13,35 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Awesome List App'),
       ),
-      body: ListView(
-        children: List.generate(
-          taskList.length,
-          (i) {
-            return TaskContainer(
-              task: taskList[i],
-              index: i,
-            );
-          },
-        ),
-      ),
+      body: CustomText(
+          text: 'Task ',
+          child: Builder(
+            builder: (context) {
+              return ListView(
+                children: List.generate(
+                  3,
+                  (i) {
+                    return TaskContainer(
+                      task: Task(
+                          title: CustomText.of(context).text + '${i + 1}',
+                          description: 'Task ${i + 1} Description'),
+                      index: i,
+                    );
+                  },
+                ),
+              );
+            },
+          )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // print(taskList.length);
-          taskList.add(
-            Task(
-                title: 'Task ${taskList.length + 1}',
-                description: 'Task ${taskList.length + 1} Description'),
-          );
-          print(taskList.length);
+          // taskList.add(
+          //   Task(
+          //       title: 'Task ${taskList.length + 1}',
+          //       description: 'Task ${taskList.length + 1} Description'),
+          // );
+          // print(taskList.length);
+
           setState(() {});
         },
         child: Icon(Icons.add),
@@ -41,12 +50,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class TaskContainer extends StatelessWidget {
+class TaskContainer extends StatefulWidget {
   final Task task;
   final int index;
 
   TaskContainer({required this.task, required this.index});
 
+  @override
+  _TaskContainerState createState() => _TaskContainerState();
+}
+
+class _TaskContainerState extends State<TaskContainer> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -63,14 +77,14 @@ class TaskContainer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    task.title,
+                    widget.task.title,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
                     height: 5,
                   ),
                   Text(
-                    task.description,
+                    widget.task.description,
                     style: TextStyle(fontSize: 20),
                   ),
                 ],
@@ -81,9 +95,12 @@ class TaskContainer extends StatelessWidget {
               child: IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () {
+                  CustomText.of(context).text = 'Item';
+                  print(CustomText.of(context).text);
                   // print(taskList[index].title);
                   // taskList.removeAt(widget.index);
                   // print(taskList.length);
+                  setState(() {});
                 },
               ),
             ),
@@ -92,7 +109,7 @@ class TaskContainer extends StatelessWidget {
               child: IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () {
-                  task.title = 'New title';
+                  widget.task.title = 'New title';
                   // print(taskList[index].title);
                   // taskList.removeAt(widget.index);
                   // print(taskList.length);
@@ -104,5 +121,30 @@ class TaskContainer extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class CustomText extends InheritedWidget {
+  final Widget child;
+  String text;
+
+  CustomText({
+    required this.child,
+    required this.text,
+  }) : super(child: child);
+
+  static CustomText of(BuildContext context) {
+    final CustomText? result =
+        context.dependOnInheritedWidgetOfExactType<CustomText>();
+    assert(result != null, 'No Custom Text found in context');
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(CustomText oldWidget) {
+    if (oldWidget.text != text)
+      return true;
+    else
+      return false;
   }
 }
