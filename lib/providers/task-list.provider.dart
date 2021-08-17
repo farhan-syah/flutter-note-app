@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_note/model/task.model.dart';
+import 'package:flutter_note/model/todo.model.dart';
 import 'package:get_storage/get_storage.dart';
 
 class TaskListProvider extends ChangeNotifier {
   List<Task> taskList;
 
   TaskListProvider({required this.taskList});
+  List<Todo> todoList = [];
 
   update() {
     final box = GetStorage();

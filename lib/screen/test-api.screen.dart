@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note/model/todo.model.dart';
+import 'package:flutter_note/providers/task-list.provider.dart';
 import 'package:flutter_note/service/api.dart';
+import 'package:provider/provider.dart';
 
-class TestApiScreen extends StatelessWidget {
+class TestApiScreen extends StatefulWidget {
   const TestApiScreen({Key? key}) : super(key: key);
+
+  @override
+  _TestApiScreenState createState() => _TestApiScreenState();
+}
+
+class _TestApiScreenState extends State<TestApiScreen> {
+  Future<List<Todo>> todoList = getTodo();
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +21,7 @@ class TestApiScreen extends StatelessWidget {
         title: Text('Screen to Test API'),
       ),
       body: FutureBuilder<List<Todo>>(
-          future: getTodo(),
+          future: todoList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -20,6 +29,8 @@ class TestApiScreen extends StatelessWidget {
               );
             } else {
               List<Todo> todoList = snapshot.data!;
+              Provider.of<TaskListProvider>(context, listen: false).todoList =
+                  todoList;
               return ListView.builder(
                 itemCount: todoList.length,
                 itemBuilder: (context, index) {
@@ -47,6 +58,12 @@ class TestApiScreen extends StatelessWidget {
               );
             }
           }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {});
+        },
+        child: Icon(Icons.refresh),
+      ),
     );
   }
 }
