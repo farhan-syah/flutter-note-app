@@ -13,15 +13,10 @@ class HomeScreen extends StatelessWidget {
         title: Text('Task List'),
         actions: [
           IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              getUser();
-            },
-          ),
-          IconButton(
             icon: Icon(Icons.power_settings_new),
-            onPressed: () {
-              signOut(context);
+            onPressed: () async {
+              // signOut(context);
+              await AppUser().signOut();
             },
           ),
         ],
