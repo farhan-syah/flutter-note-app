@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1034342772887",
+    "project_id": "task-list-a02be",
+    "storage_bucket": "task-list-a02be.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034342772887:android:1f020455a100b50834f9d2",
+        "android_client_info": {
+          "package_name": "com.kelasprogramming.flutter_note"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1034342772887-jdt997ak9903pv455cjuj1lfgdu2ogsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnMlTFuGkFgWabu7VlWzQykvhP_cMoy6s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1034342772887-jdt997ak9903pv455cjuj1lfgdu2ogsg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
