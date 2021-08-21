@@ -33,7 +33,7 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                AppUser().signIn(
+                AppUser.instance.signIn(
                     email: emailController.text,
                     password: passwordController.text);
               },

@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(Icons.power_settings_new),
             onPressed: () async {
               // signOut(context);
-              await AppUser().signOut();
+              await AppUser.instance.signOut();
             },
           ),
         ],
@@ -39,13 +39,6 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // final taskListProvider =
-          //     Provider.of<TaskListProvider>(context, listen: false);
-          // final taskList = taskListProvider.taskList;
-          // final newTask = Task(
-          //     title: 'Task ${taskList.length + 1}',
-          //     description: 'Task ${taskList.length + 1} Description');
-          // taskListProvider.addTask(newTask);
           Navigator.push(
               context,
               MaterialPageRoute(

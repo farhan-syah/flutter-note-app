@@ -8,7 +8,7 @@ class AppUser extends ChangeNotifier {
     notifyListeners();
   }
 
-  AppUser.instance() {
+  AppUser._() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       // if (user != null)
       //   this.user = user;
@@ -21,7 +21,9 @@ class AppUser extends ChangeNotifier {
 
   User? get user => FirebaseAuth.instance.currentUser;
 
-  factory AppUser() => AppUser.instance();
+  factory AppUser() => AppUser._();
+
+  static AppUser get instance => AppUser();
 
   signOut() async {
     await FirebaseAuth.instance.signOut();
