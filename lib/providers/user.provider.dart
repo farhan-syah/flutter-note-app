@@ -10,11 +10,6 @@ class AppUser extends ChangeNotifier {
 
   AppUser._() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
-      // if (user != null)
-      //   this.user = user;
-      // else
-      //   this.user = null;
-      // print(this.user);
       notifyListeners();
     });
   }
@@ -29,7 +24,7 @@ class AppUser extends ChangeNotifier {
     await FirebaseAuth.instance.signOut();
   }
 
-  signIn({required String email, required String password}) async {
+  Future<void> signIn({required String email, required String password}) async {
     print('Email: $email');
     print('Password: $password');
 
@@ -39,11 +34,26 @@ class AppUser extends ChangeNotifier {
       print('Sign in Succesful');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        throw ('No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        throw ('Wrong password provided for that user.');
       } else
-        print(e.toString());
+        throw (e.toString());
+    }
+  }
+
+  Future<bool> signUp({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      user!.updateDisplayName(name);
+      return true;
+    } catch (e) {
+      throw (e);
     }
   }
 }

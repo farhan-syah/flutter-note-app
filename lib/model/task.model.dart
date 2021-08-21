@@ -1,21 +1,29 @@
 class Task {
+  String? id;
   String title;
   String description;
   String author;
 
-  Task({required this.title, required this.description, required this.author});
+  Task(
+      {required this.title,
+      required this.description,
+      required this.author,
+      this.id});
 
-  static Task fromMap(Map<String, dynamic> data) {
+  static Task fromMap(Map<String, dynamic> data, {String? id}) {
     return Task(
-        title: data['title'] ?? '',
-        description: data['description'] ?? '',
-        author: data['author'] ?? '');
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      author: data['author'] ?? '',
+      id: id,
+    );
   }
 
   Map<String, Object> toMap() {
     return {
       'title': title,
       'description': description,
+      'author': author,
     };
   }
 }

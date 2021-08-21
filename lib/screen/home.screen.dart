@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note/model/task.model.dart';
-import 'package:flutter_note/providers/task-list.provider.dart';
 import 'package:flutter_note/providers/user.provider.dart';
 import 'package:flutter_note/screen/add-task.screen.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_note/service/api.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -21,22 +20,25 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Consumer<TaskListProvider>(
-        builder: (context, taskListProvider, child) {
-          final taskList = taskListProvider.taskList;
-          return ListView(
-            children: List.generate(
-              taskList.length,
-              (i) {
-                return TaskContainer(
-                  task: taskList[i],
-                  index: i,
-                );
-              },
-            ),
-          );
-        },
-      ),
+      body: StreamBuilder<List<Task>>(
+          stream: getTaskListStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<Task> taskList = snapshot.data!;
+              return ListView(
+                children: List.generate(
+                  taskList.length,
+                  (i) {
+                    return TaskContainer(
+                      task: taskList[i],
+                      index: i,
+                    );
+                  },
+                ),
+              );
+            } else
+              return Container();
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -97,10 +99,9 @@ class TaskContainer extends StatelessWidget {
               color: Colors.transparent,
               child: IconButton(
                 icon: Icon(Icons.delete),
-                onPressed: () {
-                  final taskListProvider =
-                      Provider.of<TaskListProvider>(context, listen: false);
-                  taskListProvider.deleteTask(index);
+                onPressed: () async {
+                  print(task.id);
+                  if (task.id != null) await deleteTask(task.id!);
                 },
               ),
             ),

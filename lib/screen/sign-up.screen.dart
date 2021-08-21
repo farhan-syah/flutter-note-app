@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note/providers/user.provider.dart';
-import 'package:flutter_note/screen/sign-up.screen.dart';
 import 'package:flutter_note/widget/loading-indicator.widget.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({Key? key}) : super(key: key);
+class SignUpScreen extends StatelessWidget {
+  SignUpScreen({Key? key}) : super(key: key);
 
   final emailController = new TextEditingController();
   final passwordController = new TextEditingController();
+  final nameController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login Screen'),
+        title: Text('Sign Up Screen'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -31,15 +31,33 @@ class LoginScreen extends StatelessWidget {
                 labelText: 'Password',
               ),
             ),
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: 'Name',
+              ),
+            ),
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: () async {
                 try {
                   LoadingIndicator.showLoadingDialog(context);
-                  await AppUser.instance.signIn(
-                      email: emailController.text,
-                      password: passwordController.text);
+                  await AppUser.instance.signUp(
+                    email: emailController.text,
+                    password: passwordController.text,
+                    name: nameController.text,
+                  );
                   Navigator.pop(context);
+                  Navigator.pop(context);
+                  // showDialog(
+                  //   context: context,
+                  //   builder: (context) {
+                  //     return AlertDialog(
+                  //       content: Text(
+                  //           'User ${emailController.text} has been registered'),
+                  //     );
+                  //   },
+                  // );
                 } catch (e) {
                   Navigator.pop(context);
                   showDialog(
@@ -52,14 +70,13 @@ class LoginScreen extends StatelessWidget {
                   );
                 }
               },
-              child: Text('Sign In '),
+              child: Text('Sign Up '),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SignUpScreen()));
+                Navigator.pop(context);
               },
-              child: Text("Don't an account? Sign Up "),
+              child: Text('Already have an account? Sign In '),
             )
           ],
         ),
