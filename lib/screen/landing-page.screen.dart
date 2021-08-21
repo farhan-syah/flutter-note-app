@@ -11,7 +11,7 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final appUser = Provider.of<AppUser>(context);
 
-    if (appUser.loggedIn) {
+    if (appUser.user != null) {
       print('Logged in');
       return HomeScreen();
     } else {
