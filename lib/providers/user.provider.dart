@@ -9,7 +9,10 @@ class AppUser extends ChangeNotifier {
     notifyListeners();
   }
 
-  AppUser.instance();
+  AppUser.instance() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) loggedIn = true;
+  }
 
   factory AppUser() => AppUser.instance();
 }
@@ -20,6 +23,7 @@ signIn(BuildContext context,
   print('Password: $password');
 
   final appUser = Provider.of<AppUser>(context, listen: false);
+
   try {
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
@@ -34,4 +38,11 @@ signIn(BuildContext context,
     } else
       print(e.toString());
   }
+}
+
+signOut(BuildContext context) async {
+  await FirebaseAuth.instance.signOut();
+  final appUser = Provider.of<AppUser>(context, listen: false);
+  appUser.loggedIn = false;
+  appUser.update();
 }
