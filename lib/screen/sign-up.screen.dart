@@ -36,6 +36,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 formControlName: 'email',
                 decoration: InputDecoration(
                   labelText: 'Email',
+                  suffixIcon: Icon(Icons.email),
                 ),
                 validationMessages: (control) {
                   return {
@@ -43,12 +44,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ValidationMessage.email: 'Email is invalid'
                   };
                 },
+                keyboardType: TextInputType.emailAddress,
               ),
               ReactiveTextField(
                 formControlName: 'password',
+                obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'Password',
-                ),
+                    labelText: 'Password', suffixIcon: Icon(Icons.lock)),
                 validationMessages: (control) {
                   return {
                     ValidationMessage.minLength: 'Min password length is 6',
@@ -58,8 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ReactiveTextField(
                 formControlName: 'name',
                 decoration: InputDecoration(
-                  labelText: 'Name',
-                ),
+                    labelText: 'Name', suffixIcon: Icon(Icons.person)),
                 validationMessages: (control) {
                   return {
                     ValidationMessage.required: 'This field is required '
