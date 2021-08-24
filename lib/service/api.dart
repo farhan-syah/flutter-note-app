@@ -7,7 +7,10 @@ Future<List<Task>> getTaskList() async {
 }
 
 Stream<List<Task>> getTaskListStream() {
-  final snapshots = FirebaseFirestore.instance.collection('tasks').snapshots();
+  final snapshots = FirebaseFirestore.instance
+      .collection('tasks')
+      .orderBy('title')
+      .snapshots();
   return snapshots.map((snapshot) => snapshot.docs
       .map(
         (e) => Task.fromMap(e.data(), id: e.id),

@@ -25,6 +25,7 @@ class HomeScreen extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<Task> taskList = snapshot.data!;
+              // taskList.sort((a,b)=>a.title.compareTo(b.title));
               return ListView(
                 children: List.generate(
                   taskList.length,
@@ -92,6 +93,19 @@ class TaskContainer extends StatelessWidget {
                     task.author,
                     style: TextStyle(fontSize: 20),
                   ),
+                  task.createdDate != null
+                      ? Column(
+                          children: [
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              task.createdDate.toString(),
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        )
+                      : Container(),
                 ],
               ),
             ),
