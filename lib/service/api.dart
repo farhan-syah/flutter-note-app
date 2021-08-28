@@ -3,7 +3,10 @@ import 'package:flutter_note/model/task.model.dart';
 import 'package:flutter_note/providers/user.provider.dart';
 
 Future<List<Task>> getTaskList() async {
-  final snapshot = await FirebaseFirestore.instance.collection('tasks').get();
+  final snapshot = await FirebaseFirestore.instance
+      .collection('tasks')
+      .where('authorId', isEqualTo: AppUser().user!.uid)
+      .get();
   return snapshot.docs.map((e) => Task.fromMap(e.data())).toList();
 }
 
@@ -45,6 +48,26 @@ Future<bool> updateTask(Task task) async {
 Future<bool> deleteTask(String taskId) async {
   try {
     await FirebaseFirestore.instance.doc('tasks/$taskId').delete();
+    return true;
+  } catch (e) {
+    print(e);
+    throw (e);
+  }
+}
+
+Future<bool> bulkDeleteTask() async {
+  try {
+    final batch = FirebaseFirestore.instance.batch();
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('tasks')
+        .where('authorId', isEqualTo: AppUser().user!.uid)
+        .get();
+    snapshot.docs.forEach((doc) {
+      batch.delete(doc.reference);
+    });
+
+    await batch.commit();
     return true;
   } catch (e) {
     print(e);

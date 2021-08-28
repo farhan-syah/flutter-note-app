@@ -43,15 +43,44 @@ class HomeScreen extends StatelessWidget {
             } else
               return Container();
           }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddTaskScreen(),
-              ));
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            onPressed: () async {
+              try {
+                LoadingIndicator.showLoadingDialog(context);
+                final result = await bulkDeleteTask();
+                if (result) {
+                  Navigator.pop(context);
+                } else
+                  throw 'Unable to update task task';
+              } catch (e) {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      content: Text(e.toString()),
+                    );
+                  },
+                );
+              }
+            },
+            child: Icon(Icons.delete),
+          ),
+          SizedBox(width: 5),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddTaskScreen(),
+                  ));
+            },
+            child: Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
@@ -131,6 +160,7 @@ class _TaskContainerState extends State<TaskContainer> {
                               task.title = form.control('title').value;
                               task.description =
                                   form.control('description').value;
+
                               final result = await updateTask(task);
                               if (result) {
                                 Navigator.pop(context);
@@ -187,7 +217,7 @@ class _TaskContainerState extends State<TaskContainer> {
             decoration: BoxDecoration(
               color: widget.task.completed
                   ? Colors.green.shade50
-                  : Colors.grey.shade200,
+                  : Colors.orange.shade200,
               border: Border.all(color: Colors.grey.shade300),
             ),
             padding: const EdgeInsets.all(8.0),
@@ -202,7 +232,7 @@ class _TaskContainerState extends State<TaskContainer> {
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
-                            decoration: widget.task.completed
+                            decoration: !widget.task.completed
                                 ? null
                                 : TextDecoration.lineThrough),
                       ),
