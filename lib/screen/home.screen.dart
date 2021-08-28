@@ -4,6 +4,8 @@ import 'package:flutter_note/model/task.model.dart';
 import 'package:flutter_note/providers/user.provider.dart';
 import 'package:flutter_note/screen/add-task.screen.dart';
 import 'package:flutter_note/service/api.dart';
+import 'package:flutter_note/widget/loading-indicator.widget.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -55,79 +57,194 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class TaskContainer extends StatelessWidget {
+class TaskContainer extends StatefulWidget {
   final Task task;
   final int index;
 
   TaskContainer({required this.task, required this.index});
 
+  @override
+  _TaskContainerState createState() => _TaskContainerState();
+}
+
+class _TaskContainerState extends State<TaskContainer> {
+  bool editMode = false;
+
+  late FormGroup form;
+
+  @override
+  void initState() {
+    super.initState();
+    form = FormGroup({
+      'title': FormControl(value: widget.task.title),
+      'description': FormControl(value: widget.task.description),
+    });
+  }
+
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        task.completed = !task.completed;
-        updateTask(task);
-      },
-      child: Padding(
+    if (editMode)
+      return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: task.completed ? Colors.green.shade50 : Colors.grey.shade200,
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      task.title,
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          decoration: task.completed
-                              ? null
-                              : TextDecoration.lineThrough),
+        child: InkWell(
+          onLongPress: () {
+            editMode = false;
+            setState(() {});
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: widget.task.completed
+                  ? Colors.green.shade50
+                  : Colors.grey.shade200,
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+            child: ReactiveForm(
+              formGroup: form,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        ReactiveTextField(
+                          formControlName: 'title',
+                          decoration: InputDecoration(
+                            labelText: 'Title',
+                          ),
+                        ),
+                        ReactiveTextField(
+                          formControlName: 'description',
+                          decoration: InputDecoration(
+                            labelText: 'Description',
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      task.description,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      task.author,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      task.createdDateInString,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: 15),
+                  Column(
+                    children: [
+                      IconButton(
+                          onPressed: () async {
+                            try {
+                              LoadingIndicator.showLoadingDialog(context);
+                              Task task = widget.task;
+                              task.title = form.control('title').value;
+                              task.description =
+                                  form.control('description').value;
+                              final result = await updateTask(task);
+                              if (result) {
+                                Navigator.pop(context);
+                                editMode = false;
+                                setState(() {});
+                              } else
+                                throw 'Unable to update task task';
+                            } catch (e) {
+                              Navigator.pop(context);
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: Text(e.toString()),
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          icon: Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          )),
+                      IconButton(
+                          onPressed: () {
+                            editMode = false;
+                            setState(() {});
+                          },
+                          icon: Icon(
+                            Icons.cancel,
+                            color: Colors.red,
+                          )),
+                    ],
+                  )
+                ],
               ),
-              Material(
-                color: Colors.transparent,
-                child: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () async {
-                    print(task.id);
-                    if (task.id != null) await deleteTask(task.id!);
-                  },
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    else
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: InkWell(
+          onTap: () {
+            widget.task.completed = !widget.task.completed;
+            updateTask(widget.task);
+          },
+          onLongPress: () {
+            editMode = true;
+            setState(() {});
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: widget.task.completed
+                  ? Colors.green.shade50
+                  : Colors.grey.shade200,
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.task.title,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            decoration: widget.task.completed
+                                ? null
+                                : TextDecoration.lineThrough),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        widget.task.description,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        widget.task.author,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        widget.task.createdDateInString,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ),
+                Material(
+                  color: Colors.transparent,
+                  child: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () async {
+                      print(widget.task.id);
+                      if (widget.task.id != null)
+                        await deleteTask(widget.task.id!);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
   }
 }

@@ -37,6 +37,7 @@ class Task {
 
   Map<String, Object?> toMap() {
     return {
+      'id': id,
       'title': title,
       'description': description,
       'author': author,
@@ -47,7 +48,7 @@ class Task {
   }
 
   get createdDateInString {
-    return DateFormat('d/M/y').add_jm().format(createdDate!);
+    return DateFormat('d/M/y').add_jm().format(createdDate);
   }
 }
 
