@@ -9,6 +9,7 @@ class Task {
   DateTime createdDate;
   String authorId;
   bool completed;
+  DateTime? dueDate;
 
   Task(
       {required this.title,
@@ -17,18 +18,23 @@ class Task {
       required this.createdDate,
       required this.authorId,
       this.completed = false,
+      this.dueDate,
       this.id});
 
   static Task fromMap(Map<String, dynamic> data, {String? id}) {
     try {
       return Task(
-          title: data['title'] ?? '',
-          description: data['description'] ?? '',
-          author: data['author'] ?? '',
-          id: id,
-          createdDate: (data['createdDate'] as Timestamp).toDate(),
-          authorId: data['authorId'] ?? '',
-          completed: data['completed'] ?? false);
+        title: data['title'] ?? '',
+        description: data['description'] ?? '',
+        author: data['author'] ?? '',
+        id: id,
+        createdDate: (data['createdDate'] as Timestamp).toDate(),
+        authorId: data['authorId'] ?? '',
+        completed: data['completed'] ?? false,
+        dueDate: data['dueDate'] != null
+            ? (data['dueDate'] as Timestamp).toDate()
+            : null,
+      );
     } catch (e) {
       print(e);
       throw (e);
@@ -44,11 +50,16 @@ class Task {
       'createdDate': createdDate,
       'authorId': authorId,
       'completed': completed,
+      'dueDate': dueDate,
     };
   }
 
   get createdDateInString {
     return DateFormat('d/M/y').add_jm().format(createdDate);
+  }
+
+  get dueDateInString {
+    return DateFormat('d/M/y').format(dueDate!);
   }
 }
 

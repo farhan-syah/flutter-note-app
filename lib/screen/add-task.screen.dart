@@ -3,12 +3,23 @@ import 'package:flutter_note/model/task.model.dart';
 import 'package:flutter_note/providers/user.provider.dart';
 import 'package:flutter_note/service/api.dart';
 import 'package:flutter_note/widget/loading-indicator.widget.dart';
+import 'package:intl/intl.dart';
 
-class AddTaskScreen extends StatelessWidget {
+class AddTaskScreen extends StatefulWidget {
   AddTaskScreen({Key? key}) : super(key: key);
 
+  @override
+  _AddTaskScreenState createState() => _AddTaskScreenState();
+}
+
+class _AddTaskScreenState extends State<AddTaskScreen> {
   final titleTextController = new TextEditingController();
+
   final descriptionTextController = new TextEditingController();
+
+  final dueDateTextController = new TextEditingController();
+
+  DateTime? dueDate;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +43,31 @@ class AddTaskScreen extends StatelessWidget {
                 labelText: 'Description',
               ),
             ),
+            TextField(
+              readOnly: true,
+              controller: dueDateTextController,
+              decoration: InputDecoration(
+                labelText: 'Due Date',
+                suffixIcon: IconButton(
+                  onPressed: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(
+                        Duration(days: 365),
+                      ),
+                    );
+                    if (date != null) {
+                      dueDate = date;
+                      dueDateTextController.text =
+                          DateFormat('d/M/y').format(date);
+                    }
+                  },
+                  icon: Icon(Icons.event),
+                ),
+              ),
+            ),
             SizedBox(height: 15),
             ElevatedButton(
               onPressed: () async {
@@ -43,7 +79,8 @@ class AddTaskScreen extends StatelessWidget {
                       title: titleTextController.text,
                       author: AppUser().user!.displayName ?? '',
                       createdDate: DateTime.now(),
-                      authorId: AppUser().user!.uid);
+                      authorId: AppUser().user!.uid,
+                      dueDate: dueDate);
                   // Provider.of<TaskListProvider>(context, listen: false)
                   //     .addTask(task);
                   final result = await addTask(task);

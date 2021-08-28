@@ -265,13 +265,12 @@ class _TaskContainerState extends State<TaskContainer> {
                         widget.task.author,
                         style: TextStyle(fontSize: 20),
                       ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.task.createdDateInString,
-                        style: TextStyle(fontSize: 20),
-                      ),
+                      widget.task.dueDate != null
+                          ? Text(
+                              widget.task.dueDateInString,
+                              style: TextStyle(fontSize: 20),
+                            )
+                          : Container()
                     ],
                   ),
                 ),
