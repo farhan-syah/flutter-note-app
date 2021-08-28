@@ -37,11 +37,13 @@ class AddTaskScreen extends StatelessWidget {
               onPressed: () async {
                 try {
                   LoadingIndicator.showLoadingDialog(context);
+
                   final task = Task(
                       description: descriptionTextController.text,
                       title: titleTextController.text,
                       author: AppUser().user!.displayName ?? '',
-                      createdDate: DateTime.now());
+                      createdDate: DateTime.now(),
+                      authorId: AppUser().user!.uid);
                   // Provider.of<TaskListProvider>(context, listen: false)
                   //     .addTask(task);
                   final result = await addTask(task);

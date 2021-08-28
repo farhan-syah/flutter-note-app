@@ -1,17 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class Task {
   String? id;
   String title;
   String description;
   String author;
-  DateTime? createdDate;
+  DateTime createdDate;
+  String authorId;
+  bool completed;
 
   Task(
       {required this.title,
       required this.description,
       required this.author,
       required this.createdDate,
+      required this.authorId,
+      this.completed = false,
       this.id});
 
   static Task fromMap(Map<String, dynamic> data, {String? id}) {
@@ -21,9 +26,9 @@ class Task {
           description: data['description'] ?? '',
           author: data['author'] ?? '',
           id: id,
-          createdDate: data['createdDate'] != null
-              ? (data['createdDate'] as Timestamp).toDate()
-              : null);
+          createdDate: (data['createdDate'] as Timestamp).toDate(),
+          authorId: data['authorId'] ?? '',
+          completed: data['completed'] ?? false);
     } catch (e) {
       print(e);
       throw (e);
@@ -36,7 +41,13 @@ class Task {
       'description': description,
       'author': author,
       'createdDate': createdDate,
+      'authorId': authorId,
+      'completed': completed,
     };
+  }
+
+  get createdDateInString {
+    return DateFormat('d/M/y').add_jm().format(createdDate!);
   }
 }
 

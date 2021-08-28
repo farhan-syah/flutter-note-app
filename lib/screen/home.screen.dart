@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_note/model/task.model.dart';
 import 'package:flutter_note/providers/user.provider.dart';
@@ -61,65 +62,70 @@ class TaskContainer extends StatelessWidget {
   TaskContainer({required this.task, required this.index});
 
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          border: Border.all(color: Colors.grey.shade300),
-        ),
+    return InkWell(
+      onTap: () {
+        task.completed = !task.completed;
+        updateTask(task);
+      },
+      child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.title,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    task.description,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    task.author,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  task.createdDate != null
-                      ? Column(
-                          children: [
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              task.createdDate.toString(),
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        )
-                      : Container(),
-                ],
+        child: Container(
+          decoration: BoxDecoration(
+            color: task.completed ? Colors.green.shade50 : Colors.grey.shade200,
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      task.title,
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          decoration: task.completed
+                              ? null
+                              : TextDecoration.lineThrough),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      task.description,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      task.author,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      task.createdDateInString,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Material(
-              color: Colors.transparent,
-              child: IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () async {
-                  print(task.id);
-                  if (task.id != null) await deleteTask(task.id!);
-                },
+              Material(
+                color: Colors.transparent,
+                child: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () async {
+                    print(task.id);
+                    if (task.id != null) await deleteTask(task.id!);
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
