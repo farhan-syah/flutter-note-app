@@ -47,25 +47,40 @@ class HomeScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           FloatingActionButton(
-            onPressed: () async {
-              try {
-                LoadingIndicator.showLoadingDialog(context);
-                final result = await bulkDeleteTask();
-                if (result) {
-                  Navigator.pop(context);
-                } else
-                  throw 'Unable to update task task';
-              } catch (e) {
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      content: Text(e.toString()),
-                    );
-                  },
-                );
-              }
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Are you sure you want to delete all task?'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                _bulkDelete(context);
+                              },
+                              child: Text('yes'),
+                            ),
+                            SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('No'),
+                              style:
+                                  ElevatedButton.styleFrom(primary: Colors.red),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  );
+                },
+              );
             },
             child: Icon(Icons.delete),
           ),
@@ -276,5 +291,29 @@ class _TaskContainerState extends State<TaskContainer> {
           ),
         ),
       );
+  }
+}
+
+_bulkDelete(BuildContext context) async {
+  {
+    try {
+      LoadingIndicator.showLoadingDialog(context);
+      final result = await bulkDeleteTask();
+      if (result) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+      } else
+        throw 'Unable to update task task';
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(e.toString()),
+          );
+        },
+      );
+    }
   }
 }
