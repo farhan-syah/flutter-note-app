@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_note/providers/user.provider.dart';
 import 'package:flutter_note/widget/loading-indicator.widget.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -13,11 +13,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final User user = AppUser().user!;
-
   @override
   Widget build(BuildContext context) {
-    print(user);
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -73,9 +70,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     await ref.putFile(File(image.path));
                     final url = await ref.getDownloadURL();
-                    print(url);
+                    // print(url);
                     await AppUser().user!.updatePhotoURL(url);
-                    print(AppUser().user);
+                    // print(AppUser().user);
                     setState(() {});
                     Navigator.pop(context);
                   }
@@ -94,15 +91,129 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 10,
           ),
           Center(
-            child: Text(
-              user.displayName!,
-              style: TextStyle(fontSize: 18),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  AppUser().user!.displayName!,
+                  style: TextStyle(fontSize: 18),
+                ),
+                IconButton(
+                  iconSize: 16,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        final nameController = TextEditingController(
+                            text: AppUser.instance.user?.displayName!);
+                        return AlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: nameController,
+                              ),
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      await AppUser().user!.updateDisplayName(
+                                          nameController.text);
+                                      Navigator.pop(context);
+                                      print(AppUser().user);
+                                      setState(() {});
+                                    },
+                                    child: Text('Update'),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.edit, color: Colors.blue),
+                )
+              ],
             ),
           ),
           Center(
-            child: Text(
-              user.email!,
-              style: TextStyle(fontSize: 18),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  AppUser.instance.user!.email!,
+                  style: TextStyle(fontSize: 18),
+                ),
+                IconButton(
+                  iconSize: 16,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        final form = FormGroup({
+                          'email': FormControl(
+                              value: AppUser.instance.user?.email,
+                              validators: [Validators.email]),
+                        });
+
+                        return AlertDialog(
+                          content: ReactiveForm(
+                            formGroup: form,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ReactiveTextField(
+                                  formControlName: 'email',
+                                ),
+                                SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ReactiveFormConsumer(
+                                      builder: (BuildContext context,
+                                          FormGroup form, Widget? child) {
+                                        return ElevatedButton(
+                                          onPressed: form.valid
+                                              ? () async {
+                                                  try {
+                                                    LoadingIndicator
+                                                        .showLoadingDialog(
+                                                            context);
+                                                    await AppUser()
+                                                        .user!
+                                                        .updateEmail(form
+                                                            .control('email')
+                                                            .value);
+                                                    Navigator.pop(context);
+                                                    Navigator.pop(context);
+                                                    print(AppUser().user);
+                                                    setState(() {});
+                                                  } catch (e) {
+                                                    Navigator.pop(context);
+                                                    print(e);
+                                                  }
+                                                }
+                                              : null,
+                                          child: Text('Update'),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.edit, color: Colors.blue),
+                )
+              ],
             ),
           ),
           Spacer(),
