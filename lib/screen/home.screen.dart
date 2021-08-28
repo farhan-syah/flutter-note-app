@@ -57,6 +57,7 @@ class HomeScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           FloatingActionButton(
+            heroTag: 'delete',
             onPressed: () {
               showDialog(
                 context: context,
@@ -96,6 +97,7 @@ class HomeScreen extends StatelessWidget {
           ),
           SizedBox(width: 5),
           FloatingActionButton(
+            heroTag: 'add',
             onPressed: () {
               Navigator.push(
                   context,
@@ -106,6 +108,24 @@ class HomeScreen extends StatelessWidget {
             child: Icon(Icons.add),
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: SafeArea(
+          child: Column(
+            children: [
+              ListTile(
+                onTap: () {},
+                title: Text('Profile'),
+                leading: Icon(Icons.person),
+              ),
+              ListTile(
+                onTap: () {},
+                title: Text('Log Out'),
+                leading: Icon(Icons.power_settings_new),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
