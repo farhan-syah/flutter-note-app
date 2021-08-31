@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Task List'),
+        title: Text('Task List ${AppUser().user!.displayName!}'),
         actions: [
           IconButton(
             icon: Icon(Icons.person),
