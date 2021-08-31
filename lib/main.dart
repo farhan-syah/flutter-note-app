@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_note/providers/user.provider.dart';
@@ -5,10 +6,14 @@ import 'package:flutter_note/screen/landing-page.screen.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 
+late List<CameraDescription> cameras;
+
 void main() async {
   await GetStorage.init();
   await Firebase.initializeApp();
+  cameras = await availableCameras();
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MyApp());
 }
 

@@ -74,8 +74,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     await AppUser().user!.updatePhotoURL(url);
                     // print(AppUser().user);
                     setState(() {});
-                    Navigator.pop(context);
                   }
+                  Navigator.pop(context);
                 } catch (e) {
                   Navigator.pop(context);
                   print(e);

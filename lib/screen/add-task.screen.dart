@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note/model/task.model.dart';
 import 'package:flutter_note/providers/user.provider.dart';
+import 'package:flutter_note/screen/camera.screen.dart';
 import 'package:flutter_note/service/api.dart';
 import 'package:flutter_note/widget/loading-indicator.widget.dart';
 import 'package:intl/intl.dart';
@@ -69,6 +70,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               ),
             ),
             SizedBox(height: 15),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CameraScreen()));
+              },
+              child: Text('Add Picture'),
+            ),
             ElevatedButton(
               onPressed: () async {
                 try {
